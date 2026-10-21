@@ -109,9 +109,12 @@ Build the prompt from these blocks, in order:
    commercial editorial grade".
 6. Always end with: "no text, no letters, no logos, no captions, no UI".
 
-**Reference the scene mood.** Pass 1–2 hosted scene refs that match the
-intended mood as repeated `--image` flags (the CLI auto-imports http(s) URLs) —
-they carry grade/energy only; never let a ref's content leak into the concept.
+**Reference the scene mood.** Pass 1–2 hosted scene refs (one on the PHOTO
+route) that match the intended mood as repeated `--image` flags — they carry
+grade/energy only; never let a ref's content leak into the concept. `--image`
+takes a local path or UUID, not a URL: download each chosen ref into the
+workspace once (`curl -fsSL --create-dirs -o refs/<name>.jpg <url>`) and pass
+the local path — the CLI auto-uploads it.
 Hosted at `https://static.higgsfield.ai/website-builder/app-cover-generator/refs/`:
 
 | ref file | mood |
@@ -128,17 +131,21 @@ Hosted at `https://static.higgsfield.ai/website-builder/app-cover-generator/refs
 | `scene-painterly-epic.jpg` | painterly fantasy |
 
 **PHOTO route** — a Soul model (`soul_cinematic`, or a cleaner
-fashion/studio Soul), `--aspect_ratio 3:2 --quality 2k --count 2`, with 1–2
-scene refs as `--image`.
+fashion/studio Soul), `--aspect_ratio 3:2 --quality 2k`, with ONE scene ref
+as `--image` (`soul_cinematic` takes at most one).
 
 **GRAPHIC route** — `gpt_image_2 --aspect_ratio 3:2 --quality high
---resolution 2k --count 2`. Same prompt doctrine; style words like "glossy 3D
+--resolution 2k`. Same prompt doctrine; style words like "glossy 3D
 render / claymation diorama / painterly still" replace the lens block.
 
+Neither route takes `--count`: for two candidates, submit two separate jobs.
+
 ```bash
+curl -fsSL --create-dirs -o refs/scene-epic-film.jpg \
+  https://static.higgsfield.ai/website-builder/app-cover-generator/refs/scene-epic-film.jpg
 higgsfield generate create gpt_image_2 \
-  --aspect_ratio 3:2 --quality high --resolution 2k --count 2 \
-  --image https://static.higgsfield.ai/website-builder/app-cover-generator/refs/scene-epic-film.jpg \
+  --aspect_ratio 3:2 --quality high --resolution 2k \
+  --image refs/scene-epic-film.jpg \
   --prompt "<scene prompt — ends with: no text, no letters, no logos, no captions, no UI>" \
   --wait
 ```
@@ -154,8 +161,9 @@ and regenerate — do not compose a weak scene. Compose is free; generations are
 not.
 
 If the winning scene is under ~1500 px wide, upscale it first
-(`higgsfield generate create bytedance_image_upscale --image <url> --wait`) —
-the script refuses art below 1500 px.
+(`higgsfield generate create bytedance_image_upscale --image <scene_job_id_or_file> --wait`,
+passing the scene job's UUID or the downloaded file, never its URL) — the
+script refuses art below 1500 px.
 
 ### 4. Break-out pass (whenever there is a clear subject)
 
@@ -164,7 +172,7 @@ Run `image_background_remover` on the winning scene and download the cutout PNG
 
 ```bash
 higgsfield generate create image_background_remover \
-  --image <winning_scene_url_or_id> --wait
+  --image <winning_scene_job_id_or_file> --wait
 ```
 
 Pass the cutout as `--cutout`: on the framed OG variants the subject then

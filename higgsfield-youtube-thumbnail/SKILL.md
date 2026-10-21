@@ -160,7 +160,7 @@ higgsfield generate create seedream_v5_pro \
   --wait --json
 ```
 
-If `seedream_v5_pro` is absent or rejects the submit, retry once with `seedream_v4_5 --quality high`. For a `4:5` main render, Seedream has no `4:5`; ask before changing the edit to `3:4`, and disclose the crop/ratio change. Each accepted edit becomes the source ID for the next tweak.
+If `seedream_v5_pro` is absent or rejects the submit, retry once with `seedream_v4_5 --quality high` and drop `--resolution 2k`: `seedream_v4_5` has no `resolution` param and rejects it with `Unknown params: resolution`. For a `4:5` main render, Seedream has no `4:5`; ask before changing the edit to `3:4`, and disclose the crop/ratio change. Each accepted edit becomes the source ID for the next tweak.
 
 CLI compatibility: versions through `1.1.20` can mislabel a `nano_banana_pro` job reference as `nano_banana_pro_job`. If the edit is rejected with a `medias.0...data.type` error, download the picked `result_url` to a local image and retry the same edit with `--image ./picked-thumbnail.png`. A local path is auto-uploaded as `media_input`; do not retry the invalid job-id payload.
 

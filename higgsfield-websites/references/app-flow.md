@@ -22,12 +22,11 @@ there.
   UX-craft rules, the Higgsfield integration rules); the canonical API
   reference is `app/packages/quanta/ai/AGENTS.md` — RELY ON IT for props/APIs;
   do NOT open or grep the component `.tsx` source to re-derive prop names.
-- **The six code layouts** (`references/app-layouts.md` +
-  `app/src/layouts/AGENTS.md`) — Studio (`studio.tsx`), Preset (`preset.tsx`),
-  App detail (`app-detail.tsx`), AI Stylist (`ai-stylist.tsx`), Skin Enhancer
-  (`skin-enhancer.tsx`), and Shots (`shots.tsx`), shipped as REAL CODE in the
-  template (not screenshots). Start from the closest one, copy it into your
-  route, and adapt it — build from the code plus the reusable pieces in
+- **The app layouts** (`references/app-layouts.md` +
+  `app/src/layouts/AGENTS.md`) — Studio, Preset or App detail, picked on create
+  with `--template studio|preset|app-detail`; the chosen one ships as REAL
+  CODE at `app/src/layouts/<template>.tsx` (not screenshots). Adapt it in
+  place — build from the code plus the reusable pieces in
   `app/src/components`, never from a screenshot.
 - **Custom components for gaps** — for anything Quanta lacks (date picker,
   calendar, data table, …), build a small component from Quanta primitives +
@@ -112,11 +111,11 @@ have read the guides + the chosen code layout, you have enough — start writing
    brand-critical, and whether to **publish to the community feed
    (marketplace)** when ready (remember it for step 8). Never a second round —
    pick sensible defaults and state them.
-2. **Create** — `higgsfield website create --type app`.
-3. **Plan the screens** — pick the closest of the six code layouts in
-   `app/src/layouts` (studio / preset / app-detail / ai-stylist / skin-enhancer
-   / shots; see `references/app-layouts.md`) and read its code +
-   `app/src/layouts/AGENTS.md`
+2. **Create** — pick the closest `--template` per `references/app-layouts.md`
+   and the closest slug from `higgsfield website categories`, then run
+   `higgsfield website create --type app --template <template> --category <slug> --subdomain <name>`.
+3. **Plan the screens** — read the shipped layout
+   `app/src/layouts/<template>.tsx` + `app/src/layouts/AGENTS.md`
    for the composition; list the screens/states (including first-run/empty
    state) and the app's own product state for D1.
 4. **Build with Quanta** — adapt the chosen code layout using

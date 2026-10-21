@@ -6,7 +6,7 @@ Ad references are reusable inspiration videos a user wants to model new ads afte
 
 Create an ad reference from one of two source types:
 
-- `--video-input <upload_id>` — UUID returned by `higgsfield upload create <video_path> --video`. Use when the user has a local video file or already uploaded one.
+- `--video-input <upload_id>` — UUID returned by `higgsfield upload create <video_path>`. Use when the user has a local video file or already uploaded one.
 - `--job <job_id>` — UUID of a previously generated video job (`higgsfield generate list --json`). Use when the user wants to reuse one of their own generated clips as a reference.
 
 Exactly one of these two flags is required.
@@ -20,7 +20,7 @@ Optional binding flags (each accepts at most one id):
 
 There are exactly two supported inputs:
 
-- A **local video file** — pass via `higgsfield upload create <path> --video`, then use the returned `upload_id` with `--video-input`.
+- A **local video file** — pass via `higgsfield upload create <path>`, then use the returned `upload_id` with `--video-input`.
 - A **prior video generation job** from this account — pass the `job_id` with `--job`.
 
 If the user supplies anything else (a URL, a streaming link, an external reference), ask for a local video file. Do not attempt to fetch or convert other inputs.
@@ -34,7 +34,7 @@ If the user supplies anything else (a URL, a streaming link, an external referen
 
 ```bash
 # From an uploaded local video
-UPLOAD_ID=$(higgsfield upload create reel.mp4 --video --json | jq -r .id)
+UPLOAD_ID=$(higgsfield upload create reel.mp4 --json | jq -r .id)
 REF_ID=$(higgsfield marketing-studio ad-references create --video-input $UPLOAD_ID --json | jq -r .id)
 
 # From a previous generation job
@@ -96,4 +96,4 @@ while :; do
 done
 ```
 
-Always wait for `completed` before passing the reference id to a generation step.
+Always wait for `completed` before passing the reference id to `marketing_studio_video` as `--ad_reference_id <id>`.

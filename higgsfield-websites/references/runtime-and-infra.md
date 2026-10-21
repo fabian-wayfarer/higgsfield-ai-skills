@@ -243,7 +243,7 @@ Every Worker must follow these constraints. Load
    `crypto.getRandomValues()`. Never `Math.random()` for IDs, tokens, or nonces.
 3. **No hardcoded secrets.** The platform injects auth via the outbound Worker.
    Website code never handles platform tokens directly. For your OWN secrets (API
-   keys, etc.), set them with `higgsfield website secrets set <website_id> --name … --value …`
+   keys, etc.), set them with `printf '%s' "$VALUE" | higgsfield website secrets set <website_id> --name … --value-stdin`
    and read them server-side as `bindings().SECRET_NAME` — never hardcode them in source.
 4. **Security headers on every response.** Apply `applySecurityHeaders()`
    (frame-ancestors allowlist, no X-Frame-Options) — see

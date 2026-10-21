@@ -51,7 +51,7 @@ Call `higgsfield generate create` once:
 ```bash
 higgsfield generate create seedance_2_0 \
   --aspect_ratio auto --duration 5 --resolution 1080p --mode std \
-  --generate_audio false --count 1 \
+  --generate_audio false \
   --end-image <cover_file_or_upload_id> \
   --prompt "<see template>" --wait
 ```

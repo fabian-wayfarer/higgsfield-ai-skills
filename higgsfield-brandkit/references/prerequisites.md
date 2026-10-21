@@ -9,7 +9,7 @@ Brandkit runs in the user's local Claude Code, Codex, or compatible agent enviro
 | State and HTML generation | Python 3 |
 | Higgsfield generations | `higgsfield` CLI, authenticated workspace |
 | HTML screenshots | Node.js, `npx`, Playwright Chromium |
-| Exact 4:5 crop from a 3:4 social render | ImageMagick (`magick` or `convert`) |
+| Exact 4:5 crop for a mockup-route social post | ImageMagick (`magick` or `convert`) |
 | SVG logo export | `rsvg-convert`, ImageMagick (`magick` or `convert`) |
 | PDF/PPTX inspection | LibreOffice (`soffice`), Poppler |
 | Canonical Brandbook | `rsvg-convert`, ImageMagick, LibreOffice, Poppler `pdffonts`, Fontconfig `fc-cache`/`fc-match` |

@@ -33,7 +33,7 @@ question, up front):
   q-prefixed tokens anywhere, and no "Powered by / Built on Higgsfield" badges
   or mentions in page content. The user's brand is the only brand on the page.
   ```bash
-  higgsfield website create --type website
+  higgsfield website create --type website --category <slug> --subdomain <name>
   ```
 - **`--type app`** — a product tightly integrated with Higgsfield: its users
   Sign in with Higgsfield and generate images/videos through the fnf SDK (the
@@ -46,19 +46,24 @@ question, up front):
   pipeline (`design-taste-frontend`, boards, wow catalog) are the website path;
   apps never get a custom brand — Quanta is the brand.
   ```bash
-  higgsfield website create --type app
+  higgsfield website create --type app --template <studio|preset|app-detail> --category <slug> --subdomain <name>
   ```
 
 - **`--type game`** — a browser game: realtime multiplayer rooms on the game
   template, where the game itself is six pure functions in `app/src/logic.js`
   and the platform already owns sockets, rooms and persistence. Requires a
-  **game genre** as `--category` (`arcade`, `puzzle`, `shooter`, …, from
-  `higgsfield website categories`) and takes **no** `--template` — a game
+  **game genre** as `--category` (`arcade`, `puzzle`, `shooter`, … per
+  `higgsfield website create --help`; `higgsfield website categories` lists
+  site categories, not genres) and takes **no** `--template` — a game
   scaffolds from the only template it can use. Single-player counts: set
   `minPlayers: 1`. See `references/game-flow.md`.
   ```bash
   higgsfield website create --type game --category arcade
   ```
+
+`--type website` and `--type app` also require `--category <slug>` — the
+closest slug from `higgsfield website categories` (e.g. `ads-marketing`,
+`cinematic`, `other`). A game's `--category` is its genre instead.
 
 **Generation is ALWAYS an app.** Any product that generates images, video,
 audio, or other AI media runs on Higgsfield — build it as `--type app` (Sign
@@ -107,6 +112,10 @@ are rejected — if that happens, try a close variant.
 3. `git` and `bun` are used locally once you clone the repo. The CLI itself
    handles create / repo / deploy / publish / status / db / secrets —
    and the asset generation jobs (`higgsfield generate …`, `higgsfield model …`).
+4. Any `higgsfield generate create` with no `--prompt` and no prompt on stdin
+   (`autosprite`, `image_to_3d`, `image_background_remover`,
+   `bytedance_image_upscale`) must end with `< /dev/null`; otherwise the CLI
+   waits for a prompt on stdin and hangs in a non-interactive shell.
 
 ## Pick the path, then follow ONE flow end-to-end
 
@@ -136,7 +145,7 @@ travels between distinct worlds. `references/scroll-scrub.md` owns that call.
 | Type | Flow |
 |---|---|
 | `--type website` | **`references/website-flow.md`** — phased pipeline (animated website by default): intake → concept → reference boards → asset system → build-to-boards → motion → cover + metadata → mechanical gate → deploy |
-| `--type app` | **`references/app-flow.md`** — the Quanta toolkit, the six code layouts, fnf SDK + auth + D1 contract, launch cover + metadata, publish gate |
+| `--type app` | **`references/app-flow.md`** — the Quanta toolkit, the `--template` app layouts, fnf SDK + auth + D1 contract, launch cover + metadata, publish gate |
 | `--type game` | **`references/game-flow.md`** — the six-function `logic.js` contract, realtime rooms, a game-genre `--category`, play-testing, deploy + publish |
 
 A game's ART and AUDIO live here too, under the `game-` prefix, and

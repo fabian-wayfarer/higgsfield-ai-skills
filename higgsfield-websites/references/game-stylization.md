@@ -148,7 +148,7 @@ corners, so corner flood-fill alone misses it).
 
 | What | Model | Params | Volume per game |
 |---|---|---|---|
-| Sprites, tiles, backgrounds, textures | `nano_banana_2` | resolution `1k`; AR `1:1` (sprite/tile/texture/ui), `16:9` (background) | ≤10 assets, `count: 1` each, all submitted in parallel |
+| Sprites, tiles, backgrounds, textures | `nano_banana_2` | resolution `1k`; AR `1:1` (sprite/tile/texture/ui), `16:9` (background) | ≤10 assets, one job each, all submitted in parallel |
 | UI elements | `gpt_image_2` | `high` / `1k`, AR `1:1` | 0–1 |
 | Character animation sheets | `gpt_image_2` (5×5 grid in one image) | AR `1:1` | 2–3 sheets max, hero only |
 | 3D concept/reference images | `gpt_image_2` or `nano_banana_2` | `1k`, AR `1:1` | one per 3D prop |

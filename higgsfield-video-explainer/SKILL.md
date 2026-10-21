@@ -46,13 +46,19 @@ Never use the monolithic `video_explainer` job in this skill.
    ```
 
 2. If `higgsfield account status` fails, ask the user to run `higgsfield auth login`, then wait.
-3. Inspect the live contracts before the first submission:
+3. Hard stop: confirm the Phase 6 assembler exists before anything else. Phases 1, 4 and 5 spend credits, and without it they produce only loose clips:
+
+   ```bash
+   higgsfield model get explainer_video
+   ```
+
+   If this exits non-zero (for example `No model with job_type "explainer_video"`), STOP. Do not run Phase 0, list presets, ask questions, or submit any job. Tell the user the `explainer_video` assembler is not available to their account on this CLI version, so the explainer cannot be built, and end the turn. Never fall back to local ffmpeg, another model, or delivering loose clips.
+4. Inspect the remaining live contracts before the first submission:
 
    ```bash
    higgsfield model get nano_banana_2
    higgsfield model get seed_audio
    higgsfield model get gemini_omni
-   higgsfield model get explainer_video
    ```
 
 ## Phase 0 — ask first
@@ -95,6 +101,7 @@ For local style donors, pass each path with a repeated `--image`. For a web imag
 
 ## Hard rules
 
+- Never submit a paid job until Bootstrap step 3 (`higgsfield model get explainer_video`) has succeeded in this session. If it fails, stop as Bootstrap step 3 says.
 - Keep every visual strictly non-photorealistic. Repeat the same STYLE descriptor and non-realism negatives in every clip prompt.
 - Keep all spoken words out of video generation. Clip audio is ambient sound or music only; no dialogue, lip-sync, or baked narration.
 - Use exactly one narration take and one clip per labeled block. Block N audio always maps to Block N video.
@@ -196,7 +203,7 @@ List the live voices, present the choices, and wait for the user to select one n
 higgsfield voices list --json
 ```
 
-Keep the selected voice's exact `id` and `type` (`preset` or `element`). Never invent or auto-pick a voice unless the user explicitly delegates it.
+Keep the selected voice's exact `id` and `voice_type` (`preset` or `element`). Never invent or auto-pick a voice unless the user explicitly delegates it.
 
 Generate one completed `seed_audio` job per narration block, always with the same voice:
 
@@ -253,7 +260,7 @@ higgsfield generate create explainer_video \
   --width 1280 \
   --height 720 \
   --wait \
-  --json
+  --json < /dev/null
 ```
 
 Use `--width 720 --height 1280` for vertical. When subtitles are enabled, add the chosen font:
@@ -268,6 +275,7 @@ Do not use local ffmpeg, the legacy assembly scripts, or the monolithic `video_e
 
 ## Checkpoints and recovery
 
+- Before Phase 1: require a successful `higgsfield model get explainer_video` in this session. If for any reason it has not run, run it now and apply the Bootstrap step 3 hard stop.
 - Before Phase 5: require one style key, exactly `N` narration lines and prompts, one selected voice, and `N` completed audio jobs.
 - Before Phase 6: require `N` completed video jobs and exact one-to-one block pairing with no missing or duplicate IDs.
 - Preset missing: refresh `preset list`; never reuse or fabricate an ID.

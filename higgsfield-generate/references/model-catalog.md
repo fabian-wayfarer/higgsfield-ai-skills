@@ -1,6 +1,6 @@
 # Model Catalog
 
-The full lineup of generation models available through Higgsfield. Each entry has its own sweet spot — pick the one that matches your brief. For the actual `--model` ID to pass to `higgsfield generate create`, run `higgsfield model list --json` and look up by display name.
+The full lineup of generation models available through Higgsfield. Each entry has its own sweet spot — pick the one that matches your brief. For the actual `--model` ID to pass to `higgsfield generate create`, run `higgsfield model list --json` and look up by display name. Marketing Studio and Cinema Studio ids (including `soul_cinema_studio`) are in `higgsfield workflow list --json`.
 
 Preferred defaults for examples and quick-start guidance in this repo:
 - **Images/design/text:** `gpt_image_2_5` (general/high-fidelity) and `nano_banana_flash` (Nano Banana 2, character/cartoon). The id `nano_banana_2` resolves to Nano Banana Pro.
@@ -32,7 +32,6 @@ Preferred defaults for examples and quick-start guidance in this repo:
 | Flux 2.0 | Black Forest Labs | Precise prompt adherence with multiple variants (pro, flex, max). A strong creative alternative when the user wants a different look from the Banana family. |
 | Flux Kontext Max | Black Forest Labs | **Context-aware editing and style transfer.** Strong for anime, stylized looks, typography remix — when defaults feel too generic. |
 | Kling O1 Image | Kling | Versatile photorealistic image generation with broad aspect-ratio support. |
-| GPT Image 1.5 | OpenAI | Earlier-generation OpenAI image model with editing and text-rendering capabilities. |
 | GPT Image 2 | OpenAI | High-fidelity image generation and editing. Used by `higgsfield-product-photoshoot` under the hood. |
 | GPT Image 2.5 (`gpt_image_2_5`) | OpenAI | **Default high-fidelity image generation.** Graphic design, UI, banners, typography, and on-image text. Reference-guided editing with Flare/Sunburst variants and quality tiers through `max`. |
 | Grok Imagine | xAI | Expressive, high-contrast, bold creative outputs. Worth trying for anime and stylized looks. |
@@ -61,7 +60,7 @@ Preferred defaults for examples and quick-start guidance in this repo:
 | Wan 2.7 | Wan | Synchronized audio with character-consistent video. The newer Wan release. |
 | Wan 2.6 | Wan | Open-weight, stylized, experimental creative. Cheap option when the brief is intentionally artistic. |
 | Kling 2.6 | Kling | Cinematic motion with advanced physics — earlier Kling release alongside 3.0. |
-| Grok Video 1.5 | xAI | **Bold image-to-video from a required reference frame.** Use when the user wants stylized, anime-like, high-contrast, or experimental motion from one starting image. Requires one `--start-image` or `--image`; duration 2–15s; resolution `480p`, `720p`, or `1080p` (`1080p` not with reference media). |
+| Grok Video 1.5 | xAI | **Bold text-to-video, or image-to-video from an optional reference frame.** Use when the user wants stylized, anime-like, high-contrast, or experimental motion. Optional `--start-image`, or `--image` references (not both); duration 2–15s; resolution `480p`, `720p`, or `1080p` (`1080p` not with reference media). |
 | Grok Imagine (video) | xAI | Text and image-to-video with audio support. Worth trying for stylized creative briefs. |
 | Cinema Studio Video | Higgsfield | Cinematic compositions with dramatic mood. Use Cinema Studio 4.0 as the modern default. |
 | Cinema Studio Video v2 | Higgsfield | Refined cinematic camera and color with genre control. Use Cinema Studio 4.0 as the modern default. |
@@ -151,12 +150,12 @@ Match by intent, not surface keyword. When two could apply, the higher entry win
 
 ### Things to keep in mind
 
-- **Don't invent model names.** Run `higgsfield model list` if you're unsure — submitting an unknown model returns `unknown model "..."`.
+- **Don't invent model names.** Run `higgsfield model list` (and `higgsfield workflow list` for Marketing Studio and Cinema Studio ids) if you're unsure — submitting an unknown model returns `unknown model "..."`.
 - **Don't downgrade for schema convenience.** If Seedance 2.5 fits the intent, validate or submit it first; do not choose Seedance 1.5 only because it lists a requested duration more explicitly.
 - **Do not misroute video analysis because the output is text.** A request like "analyze this video" or "score this ad" maps to Virality Predictor (`brain_activity`) when the user provides or references a finished video.
 - **Do not misroute 3D style into 3D asset generation.** `multi_image_to_3d` is for actual mesh/GLB-style assets from reference images. A prompt like "make a 3D render" is usually image generation.
 - **Do not treat audio generation as an audio media input.** `seed_audio`, `mirelo_text_to_audio`, and `sonilo_music` create audio from text. `--audio` is for reference audio on video models like Seedance 2.0 or an alias for `audio_references` on Seed Audio.
-- **Audio on Seedance 2.0**: reference audio comes through the media inputs with role `audio`. Native audio generation is a separate `generate_audio` flag, on by default.
+- **Audio on Seedance 2.0**: reference audio comes through `audio_references` (`--audio`). Native audio generation is a separate `generate_audio` flag, on by default.
 - **Prompt-only models reject reference media.** Z Image, Recraft V4.1, Soul Cast, Soul Location, and some Wan configs are prompt-only; pass no media flags to them. Virality Predictor is different: it returns text but requires a video input.
 - **Route branded product visuals through `higgsfield-product-photoshoot`** — its prompt enhancer adds 10 mode-specific templates on top of GPT Image 2. Direct GPT Image 2.5 generation here is the right call for everything that isn't a product photoshoot.
 - **Cinema Studio ids** (`cinematic_studio_video_4_0`, `cinematic_studio_3_0`) do not appear in `higgsfield model list`; check them with `higgsfield model get <id>`. Prefer 4.0 when the user asks for Cinema Studio without a version.
@@ -172,7 +171,7 @@ Each model accepts a fixed set of media roles or `*_references` params. When uns
 |---|---|
 | Gemini Omni Flash | `image_references` (0–7) and `video_references` (0–1); with a video reference, max 5 image references |
 | Nano Banana 2 Lite | `image_references` (0–14); `aspect_ratio=auto` requires at least one image reference |
-| Seedance 2.0 | `image`, `start_image`, `end_image`, `video`, `audio` |
+| Seedance 2.0 | `start_image`, `end_image`, `image_references`, `video_references`, `audio_references` |
 | Seedance 2.5 | `start_image`, `end_image`, `image_references`, `video_references`, `audio_references`; use `omni_reference` for reference generation |
 | Kling 3.0 | `start_image`, `end_image` |
 | Cinema Studio 4.0 | `start_image`, `end_image` (`omni_reference` only), `image_references`, `video_references`, `audio_references`; up to 30 images |
@@ -180,17 +179,17 @@ Each model accepts a fixed set of media roles or `*_references` params. When uns
 | Kling 2.6 | `start_image` |
 | Grok Video 1.5 | `start_image` (max 1) or `image_references`, not both; `audio_references` need an image reference |
 | Veo 3.1 | `start_image` (max 1) |
-| Veo 3 | `image` (max 1) |
-| Marketing Studio (video) | `image`, `start_image`, `end_image` |
+| Veo 3 | `start_image` (max 1; `--image` is remapped) |
+| Marketing Studio (video) | `image_references` (`--image`), `start_image`, `end_image` |
 | Virality Predictor (`brain_activity`) | `video` |
-| Multi-Image to 3D | `image` (1–4) |
+| Multi-Image to 3D | `image_references` (`--image`, 1–4) |
 | Seed Audio 1.0 | `audio_references` or `image_references` (optional; mutually exclusive) |
 | Mirelo Text to Audio | (no media — pass `--prompt`) |
 | Sonilo Music | (no media — pass `--prompt` and `--duration`) |
-| Most image models | `image` (1+) |
+| Most image models | `image_references` (`--image`, 1+) |
 | Z Image, Recraft V4.1, Soul Cast, Soul Location | (no media — prompt-only) |
 
-For simple image-to-video, the `start_image` role is what you want. For pure video models that only declare `image`, the `image` flag is auto-remapped to `start_image` by the CLI.
+For simple image-to-video, the `start_image` role is what you want. For video models that declare only `start_image` (e.g. `veo3`, `veo3_1`, `kling2_6`), the `--image` flag is auto-remapped to `start_image` by the CLI.
 
 ## Aspect ratios and durations
 

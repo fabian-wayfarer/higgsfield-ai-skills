@@ -21,9 +21,8 @@ selection, background removal, and sheet assembly:
 
 ```bash
 higgsfield model get autosprite
-higgsfield upload create ./character.png --json
 higgsfield generate create autosprite \
-  --image_url "<stable URL from upload output>" \
+  --image ./character.png \
   --kind walk \
   --video_tier turbo \
   --frame_count 12 \

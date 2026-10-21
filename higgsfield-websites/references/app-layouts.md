@@ -1,17 +1,19 @@
 # app-layouts — the standard Higgsfield app layouts (`type: "app"` builds ONLY)
 
 A `type: "app"` product must look and feel like a Higgsfield product, so you do
-NOT invent app chrome. The template ships the standard layouts and the UI they
-are built from as **real code** — you build by copying/composing those, not by
+NOT invent app chrome. The template ships the layout you pick with `--template` and
+the UI it is built from as **real code** — you build by adapting/composing those, not by
 reproducing a screenshot.
 
 Two hard rules, no exceptions:
 
-1. **Start from one of the six shipped layouts — Studio, Preset, App detail, AI
-   Stylist, Skin Enhancer, or Shots.** Match the app to whichever is closest
-   (`app/src/layouts/*.tsx`) and adapt it; an unusual request still maps to the
+1. **Start from one of the three CLI templates — Studio, Preset, or App
+   detail.** Match the app to whichever is closest (table below), pass it on
+   create as `--template studio|preset|app-detail`, and adapt the shipped
+   `app/src/layouts/<template>.tsx`; an unusual request still maps to the
    nearest one — adapt within it, never invent a different app shell. A fully
-   custom layout is fine only when the user asks for something none covers.
+   custom layout (`--template custom`) is fine only when the user explicitly
+   asks for one.
 2. **Read the code, then build.** After `higgsfield website repo-access` + clone, read
    `app/src/layouts/AGENTS.md` (the layout catalog — anatomy + rules for each)
    AND `app/src/components/AGENTS.md` (the MANDATORY component contract, with
@@ -20,22 +22,25 @@ Two hard rules, no exceptions:
 
 Everything is code in the repo — there are no external reference images to open.
 
-## The six layouts (`app/src/layouts/`)
+## The layouts (`app/src/layouts/<template>.tsx`)
 
-Copy the closest one into your route and adapt freely. Full anatomy per layout
-is in `app/src/layouts/AGENTS.md`.
+Adapt the shipped one in place; never rebuild or replace it. Full anatomy per
+layout is in `app/src/layouts/AGENTS.md`. AI Stylist, Skin Enhancer and Shots
+have no CLI template of their own — create with the template named in their
+row and adapt it toward that shape.
 
 | Layout | When to pick |
 |---|---|
-| `studio.tsx` (`StudioTemplate`) | A full creative workspace: projects-first `Sidebar` + hero + a floating prompt dock (`@/components/prompt-box` — mode toggle, inline setting pills, lime GENERATE) over an edge-to-edge generations feed. The richest shell — for multi-project generation tools. |
-| `preset.tsx` (`PresetTemplate`) | **Pick-a-style-then-generate**: a persistent left creation rail (`@/components/composer` + `@/components/setting-trigger` rows + costed Generate) beside a browsable preset gallery (Presets/History/How-it-works tabs + search). Tiles are horizontal (default) or vertical/portrait via `presetOrientation` — pick to match the output (vertical for 9:16 apps). |
-| `app-detail.tsx` (`AppDetailTemplate`) | A single tool's **public landing page** (the "simple app"): a centered `max-w-7xl` scroll page with a two-column generator hero (`@/components/dropzone` inputs on the left, a large `Media` preview on the right) and a "how it works in 3 steps" explainer. For a marketing/detail page around one tool, not a full workspace. |
-| `ai-stylist.tsx` (`AiStylistTemplate`) | **Configure-then-generate workspace**: a persistent creation rail (`@/components/upload-field` uploads → `AssetLibraryModal`, `TemplateModal` preset picker, `Select`/`SettingTrigger` rows, costed Generate) beside a segmented `Tabs` workspace (options / live Results canvas / `HistoryGrid` / How-it-works). For a tool where the user uploads inputs, picks options, and iterates (try-on, restyle, character). |
-| `skin-enhancer.tsx` (`SkinEnhancerTemplate`) | **Before/after enhance tool**: a centered single-tool page built around a draggable before/after compare slider (`@/components/before-after-compare`) — upload → enhance → compare original vs result, plus How-it-works and a personal `HistoryGrid`. For enhance / retouch / restore / upscale tools whose payoff is a comparison. |
-| `shots.tsx` (`ShotsTemplate`) | **Step-by-step wizard** (`@/components/step-rail`): step 1 upload one input → step 2 generate a grid of variations (`GenerationCard`) and favorite the best → step 3 upscale/refine (with a `BeforeAfterCompare`). For a linear generate → select → refine flow. |
+| `--template studio` → `studio.tsx` (`StudioTemplate`) | A full creative workspace: projects-first `Sidebar` + hero + a floating prompt dock (`@/components/prompt-box` — mode toggle, inline setting pills, lime GENERATE) over an edge-to-edge generations feed. The richest shell — for multi-project generation tools. |
+| `--template preset` → `preset.tsx` (`PresetTemplate`) | **Pick-a-style-then-generate**: a persistent left creation rail (`@/components/composer` + `@/components/setting-trigger` rows + costed Generate) beside a browsable preset gallery (Presets/History/How-it-works tabs + search). Tiles are horizontal (default) or vertical/portrait via `presetOrientation` — pick to match the output (vertical for 9:16 apps). |
+| `--template app-detail` → `app-detail.tsx` (`AppDetailTemplate`) | A single tool's **public landing page** (the "simple app"): a centered `max-w-7xl` scroll page with a two-column generator hero (`@/components/dropzone` inputs on the left, a large `Media` preview on the right) and a "how it works in 3 steps" explainer. For a marketing/detail page around one tool, not a full workspace. |
+| AI Stylist — no template; `--template preset` | **Configure-then-generate workspace**: a persistent creation rail (`@/components/upload-field` uploads → `AssetLibraryModal`, `TemplateModal` preset picker, `Select`/`SettingTrigger` rows, costed Generate) beside a segmented `Tabs` workspace (options / live Results canvas / `HistoryGrid` / How-it-works). For a tool where the user uploads inputs, picks options, and iterates (try-on, restyle, character). |
+| Skin Enhancer — no template; `--template app-detail` | **Before/after enhance tool**: a centered single-tool page built around a draggable before/after compare slider (`@/components/before-after-compare`) — upload → enhance → compare original vs result, plus How-it-works and a personal `HistoryGrid`. For enhance / retouch / restore / upscale tools whose payoff is a comparison. |
+| Shots — no template; `--template preset` | **Step-by-step wizard** (`@/components/step-rail`): step 1 upload one input → step 2 generate a grid of variations (`GenerationCard`) and favorite the best → step 3 upscale/refine (with a `BeforeAfterCompare`). For a linear generate → select → refine flow. |
 
-Map any request to the closest of the six; only build a fully custom shell when
-the user asks for something none covers.
+Map any request to the closest row above (one of the three templates); only
+build a fully custom shell (`--template custom`) when the user explicitly asks
+for one.
 
 ## Reusable UI components (`app/src/components/`)
 

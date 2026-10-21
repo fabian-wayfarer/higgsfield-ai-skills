@@ -50,23 +50,18 @@ The prompt must state:
 
 Never compose this flattened module with local Python/Pillow or runtime package installation. The controlled GPT Image 2 render is the deliverable; use the deterministic poster/banner module when exact editable typography is required.
 
+Write the completed prompt to `"$BRANDKIT_WORKDIR/social-graphic-prompt.txt"`; never inline it as a shell argument.
+
 ```bash
 higgsfield generate create gpt_image_2 \
-  --image "$BRANDKIT_WORKDIR/logo/approved-logo-2048.png" \
-  --image "$BRANDKIT_WORKDIR/reviews/approved-typography.png" \
-  --prompt "<exact social graphic prompt>" \
-  --aspect_ratio 3:4 \
+  --image "$BRANDKIT_WORKDIR/logo/<logo-slug>[-black|-white|-single-color]-2048.png" \
+  --image "$BRANDKIT_WORKDIR/reviews/brandkit-review-<n>-<review-name-slug>.png" \
+  --aspect_ratio 4:5 \
   --resolution 4k \
-  --wait --json
+  --wait --json < "$BRANDKIT_WORKDIR/social-graphic-prompt.txt"
 ```
 
-Omit the typography reference for a no-text graphic and use only live-schema ratio/resolution values. GPT Image 2 does not currently expose `4:5`; for an exact 4:5 feed post, compose with a centered 4:5 safe area, generate at `3:4`, download the result, then crop only the vertical excess:
-
-```bash
-magick generated-3x4.png -gravity center -crop '100%x93.75%+0+0' +repage final-4x5.png
-```
-
-`convert` may replace `magick`. Verify the final pixel ratio exactly equals 4:5 and that no locked logo or copy crosses the crop boundary.
+Omit the typography reference for a no-text graphic and use only live-schema ratio/resolution values. Generate a 4:5 feed post directly with `--aspect_ratio 4:5`.
 
 ## Mockup photography/application
 
@@ -77,6 +72,14 @@ magick generated-3x4.png -gravity center -crop '100%x93.75%+0+0' +repage final-4
 5. GPT Image 2 adds the exact copy, logo, and approved typography to the blank surface.
 
 Preserve Image0's camera, crop, people, pose, lighting, materials, folds, shadows, perspective, environment, and background exactly. Change only the controlled social artwork/application.
+
+Seedream does not currently expose `4:5`. For an exact 4:5 feed post on this route, compose both stages with a centered 4:5 safe area, generate both at `3:4`, download the GPT Image 2 result, then crop only the vertical excess:
+
+```bash
+magick generated-3x4.png -gravity center -crop '100%x93.75%+0+0' +repage final-4x5.png
+```
+
+`convert` may replace `magick`. Verify the final pixel ratio exactly equals 4:5 and that no locked logo or copy crosses the crop boundary.
 
 ## Typography fidelity
 

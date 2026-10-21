@@ -95,15 +95,14 @@ The prompt must contain concrete placement, scale, alignment, clear-space, color
 
 Use `--wait --json` and retain the final job ID and result URL. Do not download and re-upload the same result unless a receiving stage requires a local file.
 
-Typical one-stage call:
+Write the completed prompt contract to `"$BRANDKIT_WORKDIR/mockup-prompt.txt"`; never inline it as a shell argument. Typical one-stage call:
 
 ```bash
 higgsfield generate create seedream_v5_pro \
-  --image "$BRANDKIT_WORKDIR/logo/approved-logo-2048.png" \
-  --prompt "<complete Seedream prompt contract>" \
+  --image "$BRANDKIT_WORKDIR/logo/<logo-slug>[-black|-white|-single-color]-2048.png" \
   --aspect_ratio 3:4 \
   --resolution 2k \
-  --wait --json
+  --wait --json < "$BRANDKIT_WORKDIR/mockup-prompt.txt"
 ```
 
 Replace ratio and resolution only with values confirmed by the live schema.
@@ -118,14 +117,15 @@ If the final mockup contains any readable text—wordmark, brand name, tagline, 
 4. State the exact literal text, logo variant, placement, scale, alignment, clear space, color, and physical print/application behavior.
 5. Keep the ratio identical to the user-approved ratio.
 
+Write the completed GPT Image 2 prompt to `"$BRANDKIT_WORKDIR/mockup-text-prompt.txt"`; never inline it as a shell argument.
+
 ```bash
 higgsfield generate create gpt_image_2 \
   --image "<seedream-job-id>" \
-  --image "$BRANDKIT_WORKDIR/logo/approved-logo-2048.png" \
-  --prompt "<exact controlled text/detail application prompt>" \
+  --image "$BRANDKIT_WORKDIR/logo/<logo-slug>[-black|-white|-single-color]-2048.png" \
   --aspect_ratio 3:4 \
   --resolution 4k \
-  --wait --json
+  --wait --json < "$BRANDKIT_WORKDIR/mockup-text-prompt.txt"
 ```
 
 Use GPT Image 2 only for this controlled second stage. If there is no readable text, keep the one-call Seedream route.

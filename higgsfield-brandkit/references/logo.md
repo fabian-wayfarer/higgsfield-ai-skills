@@ -32,7 +32,7 @@ Run only when explicitly requested.
 2. Load `brandkit-design-brain.md` and run `PROPOSE_LOGO_MECHANISMS` with the brief, references, visual axes, and selected palette.
 3. Require exactly three distinct symbol-only candidate specifications.
 4. Apply `logo-prompt-enhancer.md` exactly once per candidate, building one complete structured candidate input per application.
-5. Run `higgsfield model get recraft_v4_1 --json`, then submit the three enhanced prompts as three separate `higgsfield generate create recraft_v4_1 --model_type vector --wait --json` requests with exact hex arrays in `--colors` and the selected `--background_color`.
+5. Run `higgsfield model get recraft_v4_1 --json`, then submit the three enhanced prompts as three separate `higgsfield generate create recraft_v4_1 --model_type vector --aspect_ratio 1:1 --resolution 2k --wait --json` requests with exact hex arrays in `--colors` and the selected `--background_color`.
 6. Use the three Recraft SVG result URLs directly. Do not pass them through the HTML preview script or any SVG normalizer/editor.
 7. Show all three SVGs per the logo review in `inline-widgets.md` in every mode, including explicit auto/no-question mode; never return them only as bare URLs. Then send a normal message inviting the user to review and comment when interaction is allowed.
 8. When the user selects one SVG, run `logo-inspect --source <selected SVG URL or absolute path>`. It validates the source and fingerprints the mark after ignoring a detected full-canvas Recraft background without modifying the approved SVG.

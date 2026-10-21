@@ -33,27 +33,27 @@ Each model declares a closed set of accepted roles or `*_references` params. Pas
 
 | Model | Accepted roles | Notes |
 |---|---|---|
-| Most image models (`nano_banana_flash`, `flux_2`, `seedream_v4_5`, `gpt_image_2`, …) | `image` | 1+ references, often up to 8. |
+| Most image models (`nano_banana_flash`, `flux_2`, `seedream_v4_5`, `gpt_image_2`, …) | `image_references` (`--image`) | 1+ references, often up to 8. |
 | `nano_banana_2_lite` | `image_references` | Up to 14 image references. Use repeated `--image-references` or short alias `--image`; `aspect_ratio=auto` requires at least one reference. |
 | `gemini_omni` | `image_references`, `video_references` | Fast reference-to-video. Use repeated `--image-references`/`--video-references` or aliases `--image`/`--video`. Max 1 video reference; max 7 image references, or max 5 when a video reference is included. |
 | `gpt_image_2_5` | `image_references` | Use repeated `--image-references` or the short alias `--image`. |
 | `seedance_2_5` | `start_image`, `end_image`, `image_references`, `video_references`, `audio_references` | Use `--mode omni_reference` for reference generation. `t2v` accepts no media. |
-| `seedance_2_0` | `image`, `start_image`, `end_image`, `video`, `audio` | Audio is via `medias` (role `audio`), NOT via `--generate-audio`. |
+| `seedance_2_0` | `start_image`, `end_image`, `image_references`, `video_references`, `audio_references` | Reference audio via `--audio-references` (or `--audio`), needs at least one image/video reference or a start/end frame. `--generate-audio` separately controls output audio (default `true`). |
 | `brain_activity` | `video` | Virality Predictor analyzes one uploaded clip and returns a text score report plus an Open report link; no prompt required. Treat "analyze this video" / "score this ad" as this video-analysis flow even though the output is text. Raw `.glb` and `.bin` artifacts stay in JSON/debug output, not normal chat output. |
-| `grok_video_v15` | `start_image` | Required single start frame. CLI also accepts `--image` and maps it to `start_image`. |
+| `grok_video_v15` | `start_image` alone, or `image_references` plus optional `audio_references` (audio needs an image reference) | Optional start frame via `--start-image`. `--image` maps to `image_references`, not `start_image`; any reference media (image or audio) blocks `1080p`. |
 | `kling3_0` | `start_image`, `end_image` | Image-to-video with optional last-frame transition. |
 | `kling3_0_turbo` | `start_image` | Fast text-to-video or single start-frame animation. Max 1 reference; CLI also accepts `--image` and maps it to `start_image`. |
 | `kling2_6` | `start_image` | Single frame anchor. |
 | `veo3_1` | `start_image` | Max 1 reference. |
-| `veo3` | `image` | Single image-to-video. |
-| `marketing_studio_video` | `image`, `start_image`, `end_image` | Plus `avatars`, `product_ids`, `assets` as separate fields. |
-| `multi_image_to_3d` | `image` | 1–4 object/product reference images. Returns a 3D asset rather than an image/video. |
+| `veo3` | `start_image` | Single image-to-video; `--image` is remapped to `start_image`. |
+| `marketing_studio_video` | `image_references` (`--image`), `start_image`, `end_image` | Plus `avatars`, `product_ids`, `ad_reference_id` as separate fields. |
+| `multi_image_to_3d` | `image_references` (`--image`) | 1–4 object/product reference images. Returns a 3D asset rather than an image/video. |
 | `seed_audio` | `audio_references` or `image_references` | Default text-to-audio model. Requires `--prompt`; optional references use repeated `--audio-references`/`--image-references` (short aliases: `--audio`/`--image`). Audio and image references are mutually exclusive. |
 | `mirelo_text_to_audio` | (none) | Text-to-audio / SFX generation. Pass `--prompt` and `--duration`; do not pass media inputs. |
 | `sonilo_music` | (none) | Text-to-music generation. Pass `--prompt` and `--duration`; do not pass media inputs. |
 | `z_image`, `recraft_v4_1`, `soul_cast`, `soul_location` | (none) | Prompt-only. Reject media inputs. |
 
-For simple image-to-video on a video model that only declares `image` (e.g. `veo3`), plain `--image` is auto-remapped to `start_image` by the CLI when unambiguous. When in doubt:
+For simple image-to-video on a video model that declares only `start_image` (e.g. `veo3`, `veo3_1`, `kling2_6`), plain `--image` is auto-remapped to `start_image` by the CLI when unambiguous. When in doubt:
 
 ```bash
 higgsfield model get <model_id>   # shows the accepted media roles for this model
@@ -69,7 +69,7 @@ higgsfield generate create nano_banana_flash --prompt "..." \
   --wait
 ```
 
-Single-reference video models (`grok_video_v15`, `veo3`, `veo3_1`, `kling3_0_turbo`, `kling2_6`) reject extra images — the CLI errors locally before submission with `Model accepts only one image reference`.
+Single-reference video models (`veo3`, `veo3_1`, `kling3_0_turbo`, `kling2_6`) reject extra images — the CLI errors locally before submission with `start_image accepts only one media input.`
 
 3D asset generation with `multi_image_to_3d` accepts 1–4 images. Repeat `--image` for front/side/back/detail views:
 
@@ -84,7 +84,7 @@ higgsfield generate create multi_image_to_3d \
 
 `seedance_2_5` accepts `--audio-references` (or `--audio`) in `omni_reference` mode. Its `--generate_audio` flag separately controls output audio.
 
-For `seedance_2_0`, audio references work differently. Pass via `medias` with role `audio`:
+For `seedance_2_0`, no `omni_reference` mode is needed. Pass `--audio-references` (or `--audio`) with at least one image/video reference or a start/end frame:
 
 ```bash
 higgsfield generate create seedance_2_0 \
@@ -95,7 +95,7 @@ higgsfield generate create seedance_2_0 \
   --wait
 ```
 
-**Do NOT pass `--generate-audio` to `seedance_2_0`** — the model schema doesn't declare it. Use the audio media role instead.
+`seedance_2_0` also declares `--generate-audio` (default `true`) for output audio; it does not replace reference audio.
 
 Seed Audio is the default text-to-audio model. It can run prompt-only, or use optional audio/image references:
 
@@ -136,7 +136,7 @@ The CLI returns specific error messages for known shape mismatches:
 ## Seeing what a model accepts
 
 ```bash
-higgsfield model get <model_id> --json | jq '{aspect_ratios, durations, parameters, medias}'
+higgsfield model get <model_id> --json | jq '{type, params, rules}'
 ```
 
-Returns the full schema: aspect ratios (closed enum or open), durations (closed list or `min/max` range), parameters (with descriptions and defaults), and media roles per slot.
+Returns the full schema: `params` (each with `name`, `type`, `default`, `required`, and `enum` when closed, including media params such as `start_image` and `*_references`) and `rules` (cross-param constraints).
