@@ -17,11 +17,10 @@ There is no fixed order, but **picking an ad format is mandatory** — both the 
 
 ```bash
 higgsfield marketing-studio ad-formats list
-higgsfield marketing-studio ad-formats list --type headline
 higgsfield marketing-studio ad-formats list --json
 ```
 
-Each item exposes `id`, `name`, `type`, `priority`, and an optional `media.thumbnail_url`. Filter by `--type` (client-side) when the user mentions a specific category — `headline`, `bullet-points`, `us-vs-them`, etc.
+Each item exposes `id`, `name`, `type`, `priority`, and an optional `media.thumbnail_url`. Every format has `type: headline`, so `--type` does not narrow the list; narrow by `name` instead (`Key Features`, `Comparison Table`, etc.).
 
 ## Generate
 
@@ -76,7 +75,7 @@ Flags:
 
 ## UX rules for the agent
 
-- **Always ask for an ad format.** `--format-id` is hard-required. Show the user the list (use `--type` to narrow down only when they hinted at a category) and let them pick by name.
+- **Always ask for an ad format.** `--format-id` is hard-required. Show the user the list (narrow by `name` when they hint at a category) and let them pick by name.
 - **Suggest avatar, product, or reference media** when the brief calls for them ("show the founder", "feature the product", "match this look") — but only attach what the user actually picks.
 - **Ask the user about output settings.** Aspect ratio (1:1, 9:16, 16:9, …), resolution (1k/2k/4k), quality (low/medium/high), and batch size all materially change the output and cost — confirm them with the user instead of silently defaulting.
 - **No auto-retry on failure.** If the job fails, surface the reason and let the user adjust prompt or parameters.

@@ -353,7 +353,7 @@ Never put API keys, tokens, passwords, or connection strings in source code or `
 // BAD
 const API_KEY = "sk-proj-abc123...";
 
-// GOOD -- store it with `higgsfield website secrets set <website_id> --name … --value …`
+// GOOD -- store it with `printf '%s' "$VALUE" | higgsfield website secrets set <website_id> --name … --value-stdin`
 // Access SERVER-SIDE via bindings().API_KEY (add it to AppEnv in bindings.server.ts)
 ```
 

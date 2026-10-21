@@ -3,10 +3,11 @@ version: 0.13.0
 name: higgsfield-soul-id
 description: |
   Train a Soul Character — a personalized model on a person's face that
-  Higgsfield uses for identity-faithful image and video generation.
+  Higgsfield uses for identity-faithful image generation (no video model
+  accepts a Soul reference).
   Use when: "create my Soul", "train my face", "make my digital twin",
   "build me an avatar", "learn my appearance", "create a character of me",
-  "set up identity for video", "I want my face in generated images".
+  "I want my face in generated images".
   Chain: train Soul (one-time, returns reference_id) → use in
   higgsfield-generate via `--soul-id <id>` with models like
   `text2image_soul_v2` or `soul_cinematic`.
@@ -44,8 +45,8 @@ Before any other command:
 2. **Get photos.** 5–20 face photos, varied angles and lighting. Local paths or already-uploaded IDs both work — `--image` accepts either.
 3. **Pick variant.**
    - `--soul-2` — for image generation (default)
-   - `--soul-cinematic` — for cinematic / video work
-   Choose based on user's stated downstream use. Default to `--soul-2`.
+   - `--soul-cinematic` — for cinematic-look stills (`soul_cinematic` is an image model)
+   Choose based on user's stated downstream use. Default to `--soul-2`. If the user wants video of themselves, say up front that only the Soul image generators (`text2image_soul_v2`, `soul_cinematic` and the `soul_cinema_studio` image workflow) accept `--soul-id`; no video model or video workflow does, and video models reject it with `Unknown params: custom_reference_id`.
 4. **Submit.**
    ```bash
    higgsfield soul-id create --name "<name>" --soul-2 --image ./photo1.png --image ./photo2.png ...

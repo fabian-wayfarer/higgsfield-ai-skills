@@ -186,7 +186,7 @@ Backend picks a sensible default per mode. Override with `--aspect_ratio` only i
 
 ## Resolution
 
-Use `2k` for every product-photoshoot job.
+Every product-photoshoot job renders at `2k`, the backend default. `higgsfield product-photoshoot create` has no `--resolution` flag; passing one fails with `unknown flag: --resolution`, so never add it.
 
 ## Delivering results
 

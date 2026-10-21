@@ -19,8 +19,8 @@ higgsfield website create --type game --category <genre> --subdomain <name>
   `shooter`, `platformer`, `rpg`, `strategy`, `racing`, `simulation`,
   `adventure`, `action`, `fighting`, `survival`, `horror`, `sports`,
   `card-board`, `education`, `endless-runner`, `moba`, `music-rhythm`,
-  `sandbox-building`. Fetch the live list with `higgsfield website categories`;
-  a site category (`cinematic`, `ads-marketing`, …) is rejected.
+  `sandbox-building`. `higgsfield website categories` lists site categories,
+  not genres — a site category (`cinematic`, `ads-marketing`, …) is rejected.
 - **Do NOT pass `--template`.** A game scaffolds from the one template a game
   can use; naming any other is a 422.
 - `--subdomain` as always — it becomes the live URL.

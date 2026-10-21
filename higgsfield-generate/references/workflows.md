@@ -12,11 +12,11 @@ higgsfield workflow get reframe --json
 
 Use `workflow get` before creating a job when unsure about params. Do not expect workflows to appear in `higgsfield model list`.
 
-Current public workflows:
+Current public workflows covered here (`workflow list` also returns other ids, including the Marketing Studio and Cinema Studio ones, which this skill runs with `generate create`, so they are profiled in model-catalog.md):
 
 | Workflow | Use when |
 |---|---|
-| `draw_to_video` | Edit a source video using an edited sketch/image frame at a timestamp. Business name may be "Draw To Edit"; CLI name is `draw_to_video`. |
+| `draw_to_video` | Edit a source video using one edited sketch/image frame. Business name may be "Draw To Edit"; CLI name is `draw_to_video`. |
 | `reframe` | Reframe a source video to another aspect ratio and optional resolution. |
 
 Do not use or mention `game_character_creator` unless the current CLI exposes it publicly and the user explicitly asks for it.
@@ -28,19 +28,17 @@ Do not use or mention `game_character_creator` unless the current CLI exposes it
 Use when the user has:
 - a source video
 - an edited/sketched frame image
-- the timestamp for that frame
 - an edit instruction
 
 ```bash
 higgsfield generate workflow draw_to_video \
   --video ./source.mp4 \
-  --sketch ./frame.png \
-  --timestamp 3.2 \
+  --image ./frame.png \
   --prompt "make the jacket red" \
   --wait
 ```
 
-`--image` is an alias for `--sketch`.
+The sketch frame goes in `image_references` (`--image`); exactly one is required. (The CLI help example also shows `--sketch`; prefer `--image`, which the schema declares.)
 
 ### Reframe
 
@@ -55,10 +53,8 @@ higgsfield generate workflow reframe \
 ```
 
 Optional:
-- `--mode std|pro`; default `std`
 - `--start-image <path-or-id>`
-- `--image <path-or-id>` references for `--mode pro`; use 1-2 images
-- `--folder-id <folder_id>`
+- `--image <path-or-id>` references
 
 ## Cost
 

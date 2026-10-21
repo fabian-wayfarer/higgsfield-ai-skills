@@ -41,12 +41,10 @@ For App Store / web pages without URL fetch:
 higgsfield marketing-studio webproducts create \
   --url "https://example.com" \
   --title "MyApp" \
-  --subtitle "Productivity for teams" \
-  --description "..." \
-  --favicon-url "https://example.com/favicon.png" \
-  --desktop "https://cdn/screenshot1.png" \
-  --mobile "https://cdn/mobile-screenshot.png"
+  --description "..."
 ```
+
+`--subtitle`, `--favicon-url`, `--desktop` and `--mobile` are deprecated: the CLI still parses them but no longer sends them.
 
 ## Listing
 

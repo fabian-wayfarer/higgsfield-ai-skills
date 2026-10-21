@@ -17,7 +17,7 @@
 
 - `Job ended with status "failed"` — server-side failure. Often prompt content / safety. Try rephrasing.
 - `nsfw` / `ip_detected` — content policy. Rephrase.
-- `Timeout after 10m` — model is slow today. Bump `--timeout 30m` or retry.
+- `Timeout after 10m` — the job is still running; rejoin with `higgsfield generate wait <job_id> --timeout 30m` instead of resubmitting. For future long runs pass `--wait-timeout 30m` to `generate create`.
 
 ## Rate limits
 

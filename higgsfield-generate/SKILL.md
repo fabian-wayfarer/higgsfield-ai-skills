@@ -50,7 +50,7 @@ Before any other command:
 
 ## Discovery guardrail
 
-When looking for a Higgsfield feature/model, do not rely only on semantic search or CLI `--help`. First run an unfiltered model list, then inspect likely `job_set_type` names. If the user says a model exists but search returns no results, trust that signal and verify with the full model list before answering.
+When looking for a Higgsfield feature/model, do not rely only on semantic search or CLI `--help`. First run an unfiltered model list and `higgsfield workflow list` (Marketing Studio and Cinema Studio ids appear only there), then inspect likely `job_set_type` names. If the user says a model exists but search returns no results, trust that signal and verify with the full model list and workflow list before answering.
 
 Workflows are separate from models. Discover them with `higgsfield workflow list` and inspect params with `higgsfield workflow get <workflow_name>`.
 
@@ -94,11 +94,11 @@ If the user says "analyze this video", "score this ad", "evaluate the hook", or 
    **Video:**
    - Complete narrated explainer from a topic, story, or document → use `higgsfield-video-explainer`, not generic video generation.
    - All advertising / commercial / branded ad video → Marketing Studio (see Marketing Studio below)
-   - Edit existing video from sketch/timestamp, or reframe to another aspect ratio → workflow (`draw_to_video` or `reframe`), not a model. See `references/workflows.md`.
+   - Edit existing video from a sketched frame, or reframe to another aspect ratio → workflow (`draw_to_video` or `reframe`), not a model. See `references/workflows.md`.
    - **Default for everything else → Seedance 2.5** (`seedance_2_5`): multi-shot, consistent identity, motion-heavy, image-to-video, editing, extension, 4–30s. Modes `t2v` / `omni_reference` / `video_edit` / `video_extension`; use `omni_reference` for reference inputs, including start/end frames; `t2v` accepts no media. Up to 1080p. Do not downgrade because another model's schema looks simpler.
    - User asks for 4K → Seedance 2.0 (`seedance_2_0`); say why you switched.
    - User asks for cheaper or faster → Kling 3.0 Turbo (`kling3_0_turbo`), Veo 3.1 Lite, or Seedance 1.5 Pro.
-   - Named by the user → use it, e.g. Cinema Studio 4.0 (`cinematic_studio_video_4_0`), Kling 3.0, Veo 3.1, Gemini Omni Flash (`gemini_omni`), or Grok Video 1.5 (`grok_video_v15`: one `--start-image` or `--image`, duration 2–15s, up to `1080p` without reference media).
+   - Named by the user → use it, e.g. Cinema Studio 4.0 (`cinematic_studio_video_4_0`), Kling 3.0, Veo 3.1, Gemini Omni Flash (`gemini_omni`), or Grok Video 1.5 (`grok_video_v15`: optional `--start-image` or `--image` references, not both, duration 2–15s, up to `1080p` without reference media).
 
    **Video analysis:**
    - Rate a finished video's hook, virality potential, attention, retention, or distraction risk → Virality Predictor (`brain_activity`). This is a video analysis model that returns a text score/report, not a generated media asset.
@@ -112,7 +112,7 @@ If the user says "analyze this video", "score this ad", "evaluate the hook", or 
    - Use Sonilo Music (`sonilo_music`) only when the user explicitly asks for Sonilo or you need that specialist music model. It requires `--prompt` and `--duration`, and returns audio.
    - Use Mirelo Text to Audio (`mirelo_text_to_audio`) only when the user explicitly asks for Mirelo or you need that legacy SFX model. It requires `--prompt` and `--duration`, and returns audio.
 
-   For the actual `--model` ID to pass to `higgsfield generate create`, run `higgsfield model list --json | jq` to map display names to IDs. See `references/model-catalog.md` for the full table.
+   For the actual `--model` ID to pass to `higgsfield generate create`, run `higgsfield model list --json | jq` to map display names to IDs. Marketing Studio and Cinema Studio ids (including `soul_cinema_studio`) are in `higgsfield workflow list --json`, not `model list`; `generate create` takes them as normal. See `references/model-catalog.md` for the full table.
 
 2. **Pass media inputs straight to flags.** Media flags accept a local file path **or** a UUID. CLI auto-uploads paths and auto-detects job vs upload for UUIDs. No need to pre-upload. Each model declares accepted media roles or `*_references` params — see `references/media-inputs.md`.
 3. **Validate quickly.** If unsure of params, run `higgsfield model get <jst> --json` once and pass only what's needed. Validate the preferred model before falling back to an older one. Use schema defaults otherwise. The server returns `adjustments` for non-fatal coercions (e.g. `aspect_ratio=99:99` → closest match) and a structured error for invalid declared-param values.
@@ -131,7 +131,7 @@ For workflow jobs, use `higgsfield generate workflow <workflow_name> ... --wait`
 | `--start-image <path-or-id>` | first frame for image-to-video transitions | `grok_video_v15`, `kling3_0`, `kling3_0_turbo`, `kling2_6`, `veo3_1`, `seedance_2_0`, `seedance_2_5`, `marketing_studio_video` |
 | `--end-image <path-or-id>` | last frame for transitions | `kling3_0`, `seedance_2_0`, `seedance_2_5`, `marketing_studio_video` |
 | `--video <path-or-id>` | reference or analyzed video | `seedance_2_0`, `seedance_2_5`, `brain_activity` |
-| `--audio <path-or-id>` | reference audio (lipsync, soundtrack match) | `seedance_2_0`, `seedance_2_5` (reference input; distinct from generating output audio) |
+| `--audio <path-or-id>` | reference audio (lipsync, soundtrack match) | `seedance_2_0`, `seedance_2_5`, `grok_video_v15` (needs an `--image` reference) (reference input; distinct from generating output audio) |
 
 For reference-array models, the explicit flags are `--image-references`, `--video-references`, and `--audio-references`; `--image`, `--video`, and `--audio` are short aliases when the schema exposes those params.
 
@@ -158,6 +158,8 @@ For machine-readable output (chained pipelines, agent context), add `--json`. Wi
 
 Stdin prompt: `echo "..." | higgsfield generate create z_image --wait`.
 
+No prompt: when a `generate create` has no `--prompt` and no prompt on stdin (`brain_activity`, `multi_image_to_3d`, upscalers, background removal), append `< /dev/null`. Otherwise the CLI waits for a prompt on stdin and hangs in a non-interactive shell.
+
 Soul image quality: for `text2image_soul_v2` and `soul_cinematic`, pass `--quality 1.5k` or `--quality 2k`. These are UI-facing tiers; the backend maps them to `720p`/`1080p` and model-specific dimensions from the selected `--aspect_ratio`. `soul_location` has no quality selector; it uses fixed dimensions per aspect ratio.
 
 Soul style presets: `text2image_soul_v2` accepts `--style_id <uuid>`; list curated styles with `higgsfield preset list soul-v2` and pass the chosen id. `--style_id` combines with `--soul-id` but not with an image reference. `soul_cinema_studio` also accepts `--style_id`.
@@ -173,9 +175,9 @@ Branded image/video gen: avatars + products + optional setup hooks/settings + ad
 - **Webproduct** — App Store / web page version. Auto-routes when fetching App Store URLs.
 - **Hook** — reusable opening angle / ad hook. Browse with `higgsfield marketing-studio hooks list`. Hook text is prepended to the user's prompt; it does not replace `--prompt`.
 - **Setting** — reusable environment / scene context. Browse with `higgsfield marketing-studio settings list`.
-- **Ad reference** — reusable inspiration video that can be bound to an avatar and/or product. Created from an uploaded video (`--video-input <upload_id>`) or a previous generation job (`--job <job_id>`). Browse with `higgsfield marketing-studio ad-references list`. See `references/marketing-ad-references.md`.
+- **Ad reference** — reusable inspiration video that can be bound to an avatar and/or product. Created from an uploaded video (`--video-input <upload_id>`) or a previous generation job (`--job <job_id>`). Browse with `higgsfield marketing-studio ad-references list`. Pass a completed reference to `marketing_studio_video` as `--ad_reference_id <id>`. See `references/marketing-ad-references.md`.
 - **Brand kit** — captures a brand's identity (name, logo, hero images, colours, fonts, tone) for reuse across image generations. Created by handing in a website URL (`higgsfield marketing-studio brand-kits fetch --url https://… --wait`). See `references/marketing-brand-kits.md`.
-- **Ad format** — presets that drives the visual structure of a generated image (`headline`, `bullet-points`, etc.). Read-only, browse with `higgsfield marketing-studio ad-formats list`. Required input for `dtc-ads generate`.
+- **Ad format** — presets that drives the visual structure of a generated image (`Headline`, `Key Features`, `Comparison Table`, etc.). Read-only, browse with `higgsfield marketing-studio ad-formats list`. Required input for `dtc-ads generate`.
 
 ### Discovery commands
 
@@ -197,7 +199,7 @@ higgsfield marketing-studio ad-formats list --json
 
 - One question per phase. Don't ask product+avatar+mode upfront.
 - **Two ad approaches are mutually exclusive.** Either the user gives an ad reference video (reference-driven) **or** picks hook/setting blocks (composed-from-blocks) — never both. If the user has an ad reference selected, do not offer hook/setting; if hook/setting are picked, do not offer to attach an ad reference.
-- **Ad reference source.** The only valid inputs are a local video file (uploaded via `higgsfield upload create ... --video`) or a prior video job. If the user provides anything else, ask for a local file.
+- **Ad reference source.** The only valid inputs are a local video file (uploaded via `higgsfield upload create ...`) or a prior video job. If the user provides anything else, ask for a local file.
 - **`dtc-ads` ad format is mandatory.** Always ask the user to pick from `ad-formats list`. There is no auto-default — both the CLI and server reject calls without `--format-id`.
 - **`dtc-ads` optional inputs.** Suggest avatars, products, and reference media when the brief calls for them; only attach what the user picks.
 
@@ -244,17 +246,23 @@ higgsfield marketing-studio ad-formats list --json
 When the user gives a product URL and wants a marketing video in one go:
 
 ```bash
-# 1. Trigger fetch (returns the product id, import runs in the background)
-higgsfield marketing-studio products fetch --url https://shop.example.com/sneakers --wait
+# 1. Import the product and capture its id
+PRODUCT_ID=$(higgsfield marketing-studio products fetch --url https://shop.example.com/sneakers --wait --json | jq -r .id)
+[ -n "$PRODUCT_ID" ] && [ "$PRODUCT_ID" != null ] || { echo "product import failed" >&2; exit 1; }
+PRODUCT_IDS_JSON=$(mktemp)
+printf '["%s"]' "$PRODUCT_ID" > "$PRODUCT_IDS_JSON"
 
-# 2. Generate the marketing video against the same URL — backend reuses the entity
+# 2. Generate the marketing video against the imported product
 higgsfield generate create marketing_studio_video \
-  --url https://shop.example.com/sneakers \
+  --prompt "..." \
+  --product_ids @"$PRODUCT_IDS_JSON" \
   --mode ugc \
   --duration 15 \
   --aspect_ratio 9:16 \
   --wait
 ```
+
+For App Store listings or a site/landing page (not a single product page), use `webproducts fetch` and pass `--web_product_ids @<file> --specific_mode web_product` instead of `--product_ids`.
 
 Backend dedupes by URL, so repeated runs reuse the existing entity instead of re-fetching.
 

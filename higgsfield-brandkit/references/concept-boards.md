@@ -54,7 +54,7 @@ Using the selected draft palette plus Brandkit Design Brain:
 
 1. Design Brain returns exactly three original logo mechanisms.
 2. Apply `logo-prompt-enhancer.md` once per mechanism to produce its enhanced prompt.
-3. Pass each enhanced prompt separately to `higgsfield generate create recraft_v4_1 --model_type vector --wait --json`, with the selected logo color subset in `--colors` and selected background in `--background_color`. Use the one, two, or three logo colors the concept needs; never pad to three. Exceed three only when the user explicitly requested more.
+3. Pass each enhanced prompt separately to `higgsfield generate create recraft_v4_1 --model_type vector --aspect_ratio 1:1 --resolution 2k --wait --json`, with the selected logo color subset in `--colors` and selected background in `--background_color`. Use the one, two, or three logo colors the concept needs; never pad to three. Exceed three only when the user explicitly requested more.
 4. Use Recraft's returned SVG URLs directly. Do not pass them through the HTML preview script.
 5. Show all three per the logo review in `inline-widgets.md` with direct SVG links. This review is mandatory in interactive and explicit auto/no-question modes; bare SVG URLs are not a review.
 
